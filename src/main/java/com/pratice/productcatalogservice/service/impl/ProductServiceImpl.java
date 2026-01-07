@@ -1,6 +1,6 @@
 package com.pratice.productcatalogservice.service.impl;
 
-import com.pratice.productcatalogservice.model.dto.product.ProductDto;
+import com.pratice.productcatalogservice.model.dto.product.SearchProductRequestDto;
 import com.pratice.productcatalogservice.model.dto.product.UpdateProductDto;
 import com.pratice.productcatalogservice.model.entity.Category;
 import com.pratice.productcatalogservice.model.entity.Product;
@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,21 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+
+    @Override
+    public Product getProduct(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isEmpty()){
+            throw new EntityNotFoundException("Product not found.");
+        }
+
+        return product.get();
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 
     @Override
     public Product updateProduct(UpdateProductDto request) {
@@ -51,8 +67,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        return products;
+    public List<Product> getProducts(SearchProductRequestDto request) {
+        if(request.getName() == null)
+            request.setName("");
+
+        //return productRepository.findProducts(request.getProductId(), request.getCategoryId(), request.getName().trim());
+        return new ArrayList<Product>();
     }
 }
